@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,7 +18,9 @@ async function bootstrap() {
     }),
   );
 
-  // Allows the Next.js frontend (port 3000) to call this backend (port 3001).
+  // Lets NestJS read cookies from incoming requests via req.cookies.
+  app.use(cookieParser());
+
   app.enableCors({
     origin: 'http://localhost:3000',
     credentials: true,

@@ -65,8 +65,13 @@ export class AuthRepository {
   // Creates the Organisation AND User in a single transaction.
   // If either insert fails, the whole thing rolls back — we never end up
   // with an Organisation but no User (or vice versa).
+  // Creates the Organisation AND User in a single transaction.
+  // The setup token + expiry are saved on the user so they can set their
+  // password right after verifying.
   async commitRegistration(
     payload: RegisterOrganisationDto,
+    passwordSetupToken: string,
+    passwordSetupExpiresAt: Date,
   ): Promise<{ organisationId: number; userId: number }> {
     return this.dataSource.transaction(async (manager) => {
       const orgRepo = manager.getRepository(Organisation);
@@ -94,13 +99,47 @@ export class AuthRepository {
         mobileNumber: payload.mobileNumber,
         designationId: payload.designationId ?? null,
         languageId: payload.languageId,
-        // OTP just succeeded — mark email verified.
         isEmailVerified: true,
         isMobileVerified: false,
+        passwordSetupToken,
+        passwordSetupExpiresAt,
       });
       const savedUser = await userRepo.save(user);
 
       return { organisationId: savedOrg.id, userId: savedUser.id };
+    });
+  }
+
+  // Find a user by their password-setup token. Used by both
+  // GET /password-setup-info and POST /set-password.
+  findUserByPasswordSetupToken(token: string): Promise<User | null> {
+    return this.userRepo.findOne({
+      where: { passwordSetupToken: token, isDeleted: false },
+    });
+  }
+
+  // Saves the new hashed password AND clears the setup token so it can't
+  // be reused.
+  async setUserPassword(userId: number, passwordHash: string): Promise<void> {
+    await this.userRepo.update(userId, {
+      passwordHash,
+      passwordSetupToken: null,
+      passwordSetupExpiresAt: null,
+    });
+  }
+
+  findUserById(userId: number): Promise<User | null> {
+    return this.userRepo.findOne({ where: { id: userId, isDeleted: false } });
+  }
+
+  async updatePasswordSetupToken(
+    userId: number,
+    token: string,
+    expiresAt: Date,
+  ): Promise<void> {
+    await this.userRepo.update(userId, {
+      passwordSetupToken: token,
+      passwordSetupExpiresAt: expiresAt,
     });
   }
 }

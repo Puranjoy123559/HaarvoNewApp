@@ -69,6 +69,34 @@ export class EmailService {
     }
   }
 
+  // Sends a clickable password-setup link.
+  async sendPasswordSetupLinkEmail(
+    toEmail: string,
+    setupUrl: string,
+    expiresInSeconds: number,
+  ): Promise<void> {
+    const expiryMinutes = Math.floor(expiresInSeconds / 60);
+    const html = this.buildPasswordSetupEmailHtml(setupUrl, expiryMinutes);
+
+    try {
+      await this.transporter.sendMail({
+        from: this.fromAddress,
+        to: toEmail,
+        subject: 'Set your Haarvo password',
+        html,
+      });
+      this.logger.log(`Password setup link sent to ${toEmail}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password setup link to ${toEmail}`,
+        error,
+      );
+      throw new InternalServerErrorException(
+        'Could not send password setup email. Please try again.',
+      );
+    }
+  }
+
   // Returns the HTML body of the OTP email.
   // Kept private here for simplicity. If we add more email types, we'll move
   // these templates into a /templates folder, similar to .cshtml in .NET.
@@ -103,6 +131,41 @@ export class EmailService {
           </p>
         </div>
 
+        <div style="background: #F9FAFB; padding: 16px 24px; text-align: center; border-radius: 0 0 8px 8px; border: 1px solid #E5E7EB; border-top: none;">
+          <p style="color: #9CA3AF; font-size: 12px; margin: 0;">
+            &copy; Haarvo. This is an automated message — please do not reply.
+          </p>
+        </div>
+      </div>
+    `;
+  }
+  // Returns the HTML body of the password-setup link email.
+  private buildPasswordSetupEmailHtml(
+    setupUrl: string,
+    expiryMinutes: number,
+  ): string {
+    return `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #111827;">
+        <div style="background: linear-gradient(135deg, #0E3D2E, #145239); padding: 28px 24px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 28px;">
+            Haarvo<span style="color: #7FD09A;">.</span>
+          </h1>
+        </div>
+        <div style="background: #ffffff; padding: 32px 24px; border: 1px solid #E5E7EB; border-top: none;">
+          <h2 style="font-size: 20px; margin: 0 0 12px; color: #111827;">Set your password</h2>
+          <p style="color: #4B5563; font-size: 14px; line-height: 1.6; margin: 0 0 24px;">
+            Click the button below to set or reset the password for your Haarvo account.
+          </p>
+          <div style="text-align: center; margin: 0 0 24px;">
+            <a href="${setupUrl}"
+               style="display: inline-block; background: #0E3D2E; color: #ffffff; padding: 14px 28px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 14px;">
+              Set my password
+            </a>
+          </div>
+          <p style="color: #6B7280; font-size: 13px; line-height: 1.5; margin: 0;">
+            This link expires in <strong>${expiryMinutes} minutes</strong>. If you didn't request this, you can safely ignore it.
+          </p>
+        </div>
         <div style="background: #F9FAFB; padding: 16px 24px; text-align: center; border-radius: 0 0 8px 8px; border: 1px solid #E5E7EB; border-top: none;">
           <p style="color: #9CA3AF; font-size: 12px; margin: 0;">
             &copy; Haarvo. This is an automated message — please do not reply.

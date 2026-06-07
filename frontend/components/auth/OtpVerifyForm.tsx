@@ -58,10 +58,12 @@ export default function OtpVerifyForm() {
       const response = await authApi.verifyOtp({ otpToken, otpCode });
       setSuccessMessage(response.message);
 
-      // Brief pause so the user sees the success state, then go home.
+      // Brief pause so the user sees the green success card,
+      // then navigate to the create-password page using the token
+      // returned by verify-otp.
       setTimeout(() => {
-        router.push("/");
-      }, 2000);
+        router.push(`/create-password?token=${response.passwordSetupToken}`);
+      }, 1500);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Verification failed";

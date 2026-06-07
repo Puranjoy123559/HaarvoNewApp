@@ -60,4 +60,12 @@ export class User extends BaseEntity {
   // schema change later.
   @Column({ type: 'varchar', length: 255, nullable: true })
   passwordHash!: string | null;
+
+  // The one-time token used to set/reset password.
+  // Stored as nullable + unique — once used, we clear it back to null.
+  @Column({ type: 'uuid', nullable: true, unique: true })
+  passwordSetupToken!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  passwordSetupExpiresAt!: Date | null;
 }

@@ -68,4 +68,56 @@ export interface VerifyOtpResponse {
   organisationId: number;
   userId: number;
   message: string;
+  passwordSetupToken: string;
+  passwordSetupExpiresInSeconds: number;
+}
+
+// GET /auth/password-setup-info?token=...
+export interface PasswordSetupInfoResponse {
+  email: string;
+  expiresInSeconds: number;
+}
+
+// POST /auth/set-password
+export interface SetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+export interface SetPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+// POST /auth/login
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+}
+
+// GET /auth/me
+export interface UserInfo {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  organisationId: number;
+}
+
+// POST /auth/request-password-setup
+export interface RequestPasswordSetupRequest {
+  email: string;
+}
+export interface RequestPasswordSetupResponse {
+  message: string;
+}
+
+// POST /auth/logout
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
 }
