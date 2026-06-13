@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import {
   RegisterFormData,
   getEmptyRegisterForm,
@@ -752,9 +754,12 @@ const updateStateField = (newStateId: string) => {
 
           <p className="text-center text-sm text-gray-600">
             Already registered?{" "}
-            <a href="#" className="text-[#0E3D2E] font-semibold underline">
+            <Link
+              href="/login"
+              className="text-[#0E3D2E] font-semibold underline"
+            >
               Log in here
-            </a>
+            </Link>
           </p>
         </form>
       </div>

@@ -318,7 +318,11 @@ export class AuthService implements IAuthService {
 
     const email = dto.email.trim().toLowerCase();
     const user = await this.authRepository.findUserByEmail(email);
-    if (!user) return genericResponse;
+    // Email is not in our database — tell the user clearly.
+    // (404 Not Found; the frontend shows this message in red.)
+    if (!user) {
+      throw new NotFoundException('This email is not yet registered');
+    }
 
     const token = randomUUID();
     const expiresAt = new Date(

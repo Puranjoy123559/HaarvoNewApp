@@ -8,6 +8,7 @@ import { MastersModule } from './modules/masters/masters.module';
 import { OrganisationsModule } from './modules/organisations/organisations.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PilotModule } from './modules/pilot/pilot.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AuthModule } from './modules/auth/auth.module';
     OrganisationsModule,
     UsersModule,
     AuthModule,
+    PilotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

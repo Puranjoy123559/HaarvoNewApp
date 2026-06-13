@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import PilotWaitlistModal from "@/components/pilot/PilotWaitlistModal";
 import { Info, Asterisk, ArrowRight } from "lucide-react";
 
 // Props — values that will come from the database/API later
@@ -13,9 +15,11 @@ export default function CTA({
   reliabilityValue = "99.9%",
   reliabilityLabel = "System Reliability",
 }: CTAProps) {
+// Controls whether the waitlist modal is shown.
+  const [isPilotModalOpen, setIsPilotModalOpen] = useState(false);
+
   const handleApplyPilot = () => {
-    // TODO: open signup modal
-    alert("Apply for Phase 1 Pilot clicked!");
+    setIsPilotModalOpen(true);
   };
 
   const handleViewStructure = () => {
@@ -29,7 +33,7 @@ export default function CTA({
   };
 
   return (
-    <section id="solutions" className="bg-[#F5F4F1] py-20 px-6">
+    <section id="solutions" className="bg-[#F5F4F1] ">
       <div className="max-w-7xl mx-auto">
         {/* ============ TOP DARK GREEN BOX ============ */}
         <div className="bg-[#0E3D2E] rounded-2xl py-12 px-6 text-center text-white">
@@ -72,9 +76,9 @@ export default function CTA({
           </p>
 
           {/* Dashboard image placeholder (replace with real image later) */}
-          <div className="bg-black/40 border border-green-900 rounded-lg aspect-[16/5] flex items-center justify-center text-gray-500 max-w-4xl mx-auto">
+          {/* <div className="bg-black/40 border border-green-900 rounded-lg aspect-[16/5] flex items-center justify-center text-gray-500 max-w-4xl mx-auto">
             <span className="text-sm">[ Dashboard Image Placeholder ]</span>
-          </div>
+          </div> */}
         </div>
 
         {/* ============ BOTTOM TWO CARDS ============ */}
@@ -116,6 +120,13 @@ export default function CTA({
           </div>
         </div>
       </div>
+
+      {/* The shared waitlist modal */}
+      <PilotWaitlistModal
+        isOpen={isPilotModalOpen}
+        onClose={() => setIsPilotModalOpen(false)}
+      />
+      
     </section>
   );
 }

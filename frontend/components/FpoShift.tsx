@@ -66,16 +66,16 @@ export default function FpoShift() {
         </div>
 
         {/* Divider line + center tagline */}
-        <div className="border-t border-gray-300 mt-12 pt-6 mb-10">
+        <div className="border-t border-gray-300 mt-10 pt-6 mb-5">
           <p className="text-center text-sm font-semibold text-[#0E3D2E]">
             {/* For the first time, FPOs don&apos;t just participate in trade — they control it. */}
           </p>
         </div>
 
         {/* BOTTOM — chart image placeholder (replace with real image later) */}
-        <div className="bg-gray-300 rounded-lg aspect-[16/6] flex items-center justify-center text-gray-500">
+        {/* <div className="bg-gray-300 rounded-lg aspect-[16/6] flex items-center justify-center text-gray-500">
           <span className="text-sm">[ FPO Chart Image Placeholder ]</span>
-        </div>
+        </div> */}
       </div>
     </section>
   );

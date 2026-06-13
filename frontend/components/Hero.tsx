@@ -1,12 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import PilotWaitlistModal from "@/components/pilot/PilotWaitlistModal";
+
 // Hero = the big top section with the main headline and CTA buttons
 export default function Hero() {
-  // Placeholder click handlers
-  const handleJoinPilot = () => {
-    // TODO: open signup form
-    alert("Join the Phase 1 Pilot clicked!");
-  };
+  // Controls whether the waitlist modal is shown.
+  const [isPilotModalOpen, setIsPilotModalOpen] = useState(false);
 
   const handleViewMap = () => {
     // TODO: navigate to ecosystem page
@@ -30,7 +30,7 @@ export default function Hero() {
         {/* Two action buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={handleJoinPilot}
+            onClick={() => setIsPilotModalOpen(true)}
             className="bg-[#0E3D2E] text-white px-8 py-3 rounded-md font-semibold hover:bg-[#0A2E22] transition"
           >
             Join the Phase 1 Pilot
@@ -43,6 +43,12 @@ export default function Hero() {
           </button>
         </div>
       </div>
+
+      {/* The shared waitlist modal */}
+      <PilotWaitlistModal
+        isOpen={isPilotModalOpen}
+        onClose={() => setIsPilotModalOpen(false)}
+      />
     </section>
   );
 }
