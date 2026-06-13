@@ -2,6 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import * as dns from 'dns';
+
+// Render's free containers have no working IPv6 outbound. Without this, Node
+// tries to reach Gmail's SMTP server over IPv6 and fails with ENETUNREACH.
+// Forcing IPv4 first makes outbound email work.
+dns.setDefaultResultOrder('ipv4first');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

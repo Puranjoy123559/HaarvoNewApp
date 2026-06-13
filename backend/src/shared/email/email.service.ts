@@ -32,6 +32,11 @@ export class EmailService {
         user: this.configService.get<string>('SMTP_USER'),
         pass: this.configService.get<string>('SMTP_PASSWORD'),
       },
+      // Fail fast instead of hanging forever if the SMTP server is
+      // unreachable or slow (10 seconds each).
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
 
     const fromName =
