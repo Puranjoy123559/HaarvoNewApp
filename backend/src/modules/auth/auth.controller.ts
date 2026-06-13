@@ -25,6 +25,20 @@ const COOKIE_NAME = 'haarvo_session';
 // 7 days in milliseconds — matches JWT_EXPIRES_IN default.
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
+// In production the frontend (Vercel) and backend (Koyeb) live on different
+// domains, so the login cookie is "cross-site". Browsers only send a
+// cross-site cookie when it is sameSite:'none' AND secure:true (HTTPS) —
+// which is exactly what the hosting providers give us.
+// On local dev we keep the simpler lax/non-secure settings.
+const isProduction = process.env.NODE_ENV === 'production';
+
+const cookieOptions = {
+  httpOnly: true, // JS can't read it — XSS-safe
+  sameSite: isProduction ? ('none' as const) : ('lax' as const),
+  secure: isProduction, // true on HTTPS (prod), false on local http
+  path: '/',
+};
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -76,11 +90,8 @@ export class AuthController {
     const { token } = await this.authService.login(dto);
 
     res.cookie(COOKIE_NAME, token, {
-      httpOnly: true, // JS can't read it — XSS-safe
-      sameSite: 'lax', // CSRF protection for same-site requests
-      secure: false, // set to true in production (HTTPS only)
+      ...cookieOptions,
       maxAge: COOKIE_MAX_AGE_MS,
-      path: '/',
     });
 
     return { success: true, message: 'Logged in successfully' };
@@ -89,7 +100,7 @@ export class AuthController {
   // ===== Logout (clears the cookie) =====
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie(COOKIE_NAME, { path: '/' });
+    res.clearCookie(COOKIE_NAME, cookieOptions);
     return { success: true, message: 'Logged out' };
   }
 

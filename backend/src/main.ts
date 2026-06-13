@@ -21,13 +21,19 @@ async function bootstrap() {
   // Lets NestJS read cookies from incoming requests via req.cookies.
   app.use(cookieParser());
 
+  // Allow our frontend to call this API with cookies.
+  // We read the allowed origin from an env var (CORS_ORIGIN) so we never
+  // hardcode it. Falls back to localhost for local development.
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000',
     credentials: true,
   });
 
+  // '0.0.0.0' = listen on all network interfaces. Hosting platforms like
+  // Koyeb run the app inside a container and need this — listening only on
+  // localhost would make it unreachable from the internet.
   const port = process.env.PORT ?? 3001;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Backend is running on http://localhost:${port}/api/v1`);
 }
 bootstrap().catch((err) => {

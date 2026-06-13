@@ -29,6 +29,14 @@ import { PilotModule } from './modules/pilot/pilot.module';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
 
+        // Neon (and most cloud Postgres) require an SSL connection.
+        // We turn it on only when DB_SSL=true (set on the server) and leave
+        // it off for your local database.
+        ssl:
+          config.get<string>('DB_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
+
         // Automatically finds all our entity classes — no need to list them.
         autoLoadEntities: true,
 
