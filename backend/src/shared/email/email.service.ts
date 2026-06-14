@@ -4,52 +4,59 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
-import type { Transporter } from 'nodemailer';
 
 // All email sending goes through this service.
-// Any future module (password reset, welcome email, invoices)
-// can inject EmailService and call it — same idea as an IEmailService
-// in .NET that all features depend on.
+// We use Brevo's HTTP API (over https / port 443) instead of SMTP, because
+// Render's free tier blocks SMTP ports. HTTPS is never blocked.
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private readonly transporter: Transporter;
-  private readonly fromAddress: string;
+  private readonly apiKey: string;
+  private readonly fromName: string;
+  private readonly fromEmail: string;
 
   constructor(private readonly configService: ConfigService) {
-    // The transporter is created ONCE when this service is constructed,
-    // not every email. Reusing it is the recommended Nodemailer pattern.
-    const port = Number(this.configService.get<string>('SMTP_PORT'));
-
-    this.transporter = nodemailer.createTransport({
-      host: this.configService.get<string>('SMTP_HOST'),
-      port,
-      // secure=true is required for port 465 (SSL).
-      // For port 587 (STARTTLS) it must be false.
-      secure: port === 465,
-      auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASSWORD'),
-      },
-      // Fail fast instead of hanging forever if the SMTP server is
-      // unreachable or slow (10 seconds each).
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
-
-    const fromName =
+    this.apiKey = this.configService.get<string>('BREVO_API_KEY') || '';
+    this.fromName =
       this.configService.get<string>('SMTP_FROM_NAME') || 'Haarvo';
-    const fromEmail =
-      this.configService.get<string>('SMTP_FROM_EMAIL') ||
-      this.configService.get<string>('SMTP_USER');
-
-    // Format: '"Display Name" <email@domain.com>'
-    this.fromAddress = `"${fromName}" <${fromEmail}>`;
+    this.fromEmail = this.configService.get<string>('SMTP_FROM_EMAIL') || '';
   }
 
-  // Sends the OTP email. Throws if the SMTP server rejects the message.
+  // Low-level helper: sends ONE email through Brevo's HTTP API.
+  // 'fetch' is built into Node, so we don't need any extra package.
+  private async sendEmail(
+    toEmail: string,
+    subject: string,
+    html: string,
+  ): Promise<void> {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': this.apiKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        sender: { name: this.fromName, email: this.fromEmail },
+        to: [{ email: toEmail }],
+        subject,
+        htmlContent: html,
+      }),
+    });
+
+    // If Brevo didn't accept it, log its reason so we can debug from the logs.
+    if (!response.ok) {
+      const errorText = await response.text();
+      this.logger.error(
+        `Brevo API failed (${response.status}) sending to ${toEmail}: ${errorText}`,
+      );
+      throw new InternalServerErrorException(
+        'Could not send email. Please try again.',
+      );
+    }
+  }
+
+  // Sends the OTP email.
   async sendOtpEmail(
     toEmail: string,
     otpCode: string,
@@ -57,21 +64,8 @@ export class EmailService {
   ): Promise<void> {
     const expiryMinutes = Math.floor(expiresInSeconds / 60);
     const html = this.buildOtpEmailHtml(otpCode, expiryMinutes);
-
-    try {
-      await this.transporter.sendMail({
-        from: this.fromAddress,
-        to: toEmail,
-        subject: 'Your Haarvo verification code',
-        html,
-      });
-      this.logger.log(`OTP email sent to ${toEmail}`);
-    } catch (error) {
-      this.logger.error(`Failed to send OTP email to ${toEmail}`, error);
-      throw new InternalServerErrorException(
-        'Could not send verification email. Please try again.',
-      );
-    }
+    await this.sendEmail(toEmail, 'Your Haarvo verification code', html);
+    this.logger.log(`OTP email sent to ${toEmail}`);
   }
 
   // Sends a clickable password-setup link.
@@ -82,24 +76,8 @@ export class EmailService {
   ): Promise<void> {
     const expiryMinutes = Math.floor(expiresInSeconds / 60);
     const html = this.buildPasswordSetupEmailHtml(setupUrl, expiryMinutes);
-
-    try {
-      await this.transporter.sendMail({
-        from: this.fromAddress,
-        to: toEmail,
-        subject: 'Set your Haarvo password',
-        html,
-      });
-      this.logger.log(`Password setup link sent to ${toEmail}`);
-    } catch (error) {
-      this.logger.error(
-        `Failed to send password setup link to ${toEmail}`,
-        error,
-      );
-      throw new InternalServerErrorException(
-        'Could not send password setup email. Please try again.',
-      );
-    }
+    await this.sendEmail(toEmail, 'Set your Haarvo password', html);
+    this.logger.log(`Password setup link sent to ${toEmail}`);
   }
 
   // Returns the HTML body of the OTP email.
