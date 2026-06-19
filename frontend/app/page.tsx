@@ -9,6 +9,7 @@ import FpoShift  from "@/components/FpoShift";
 // import Testimonial from "@/components/Testimonial";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import CrossCollective from "@/components/CrossCollective";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,7 @@ export default function HomePage() {
       <Steps />
       <Features />
       <FpoShift  />
+      <CrossCollective />
       {/* <Testimonial /> */}
       <CTA />
       <Footer />

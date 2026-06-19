@@ -18,13 +18,13 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto text-center">
         {/* Main headline */}
         <h1 className="text-5xl md:text-6xl font-bold text-[#0E3D2E] leading-tight mb-6">
-          The Traceable Trade Execution Platform for the Agri First-Mile.
+          The Traceable Trade Execution Infrastructure for Farmer Collectives.
         </h1>
 
         {/* Subtitle */}
         <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-10">
-          Synchronizing Farmer Collectives (FCOs) with Institutional Buyers to
-          eliminate value leaks and standardize agricultural logistics.
+          Synchronizing aggregated supply with institutional demand to 
+          eliminate value leaks and standardize agricultural trade execution.
         </p>
 
         {/* Two action buttons */}
@@ -33,7 +33,7 @@ export default function Hero() {
             onClick={() => setIsPilotModalOpen(true)}
             className="bg-[#0E3D2E] text-white px-8 py-3 rounded-md font-semibold hover:bg-[#0A2E22] transition"
           >
-            Join the Phase 1 Pilot
+            Join the Waitlist
           </button>
           <button
             onClick={handleViewMap}

@@ -8,19 +8,19 @@ export default function Steps() {
       number: 1,
       icon: Smartphone,
       title: "Digitize (M-Konnect)",
-      desc: "Offline-first mobile entry for FCO managers to log harvest lots and farmer metadata at the source.",
+      desc: "Capture member participation, supply availability and lot information directly from the field.",
     },
     {
       number: 2,
       icon: LayoutGrid,
-      title: "Match (Haarvo Dashboard)",
-      desc: "Aggregated lots are broadcasted to our institutional buyer network for instant demand matching.",
+      title: "Match (Trade Hub)",
+      desc: "Structured lots are matched with verified buyer demand and converted into executable trades.",
     },
     {
       number: 3,
       icon: Truck,
       title: "Execute (Trade-Sync)",
-      desc: "Logistics are dispatched, quality is verified via IoT, and settlements are processed automatically.",
+      desc: "Dispatches, verification and settlements are coordinated through a single trade workflow.",
     },
   ];
 
@@ -30,11 +30,10 @@ export default function Steps() {
         {/* Section heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-[#0E3D2E] mb-4">
-            3 Steps to Traceable First-Mile Trade
+            Digitize. Match. Execute.
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Our vertical integration platform streamlines the journey from dirt
-            to dispatch.
+            Coordinate supply, demand, and execution through a single trade workflow
           </p>
         </div>
 

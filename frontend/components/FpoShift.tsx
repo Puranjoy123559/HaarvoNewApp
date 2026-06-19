@@ -31,7 +31,7 @@ export default function FpoShift() {
       <div className="max-w-7xl mx-auto">
         {/* TOP — small outlined pill label */}
         <span className="inline-block border border-[#0E3D2E] text-[#0E3D2E] text-xs font-bold px-4 py-1.5 rounded-full mb-6 tracking-wider">
-          FPO CAPABILITY SHIFT
+          FARMER COLLECTIVES CAPABILITY SHIFT
         </span>
 
         {/* Main heading */}
@@ -41,7 +41,7 @@ export default function FpoShift() {
 
         {/* Sub heading */}
         <p className="text-gray-600 text-base max-w-3xl mb-12">
-          Haarvo doesn&apos;t just digitize workflows — it gives FPOs control over pricing, execution, and payouts.
+          Haarvo doesn&apos;t just digitize workflows — it gives Farmer Collectives control over pricing, execution, and payouts.
         </p>
 
         {/* 2x2 grid of capability cards */}

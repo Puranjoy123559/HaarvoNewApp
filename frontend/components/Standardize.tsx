@@ -41,22 +41,22 @@ export default function Standardize() {
     {
       icon: CheckCircle,
       title: "Digital Lots",
-      desc: "Blockchain-backed immutable digital records from the point of aggregation.",
+      desc: "Create trusted digital records with complete origin and transaction history.",
     },
     {
       icon: Zap,
       title: "Real-time Matching",
-      desc: "AI-driven engine matches FCO inventory with institutional buy-orders instantly.",
+      desc: "Match aggregated supply with institutional demand instantly.",
     },
     {
       icon: RefreshCw,
       title: "Verified Load-Sync",
-      desc: "GPS-integrated logistics synchronization ensure weight and quality integrity.",
+      desc: "Synchronize dispatch, quantity, and quality verification in one workflow”.",
     },
     {
       icon: Building,
       title: "Accelerated Payouts",
-      desc: "Automated escrow settlement triggers payment upon load verification.",
+      desc: "Enable transparent and settlement-linked trade payments.",
     },
   ];
 
@@ -65,7 +65,7 @@ export default function Standardize() {
       <div className="max-w-7xl mx-auto">
         {/* Section title */}
         <h2 className="text-4xl md:text-5xl font-bold text-[#0E3D2E] mb-2">
-          Standardize the First-Mile.
+          The Shift from Fragmentation to Standardization.
         </h2>
         <div className="w-24 h-1 bg-[#0E3D2E] mb-12"></div>
 

@@ -6,22 +6,22 @@ export default function Features() {
     {
       icon: QrCode,
       title: "Lot-Based Traceability",
-      desc: "Unique cryptographic identifiers for every grain, linking every batch back to its original farmer cluster.",
+      desc: "Verifiable lot records connecting every batch to its source and trade journey.",
     },
     {
       icon: Languages,
       title: "Vernacular Interface",
-      desc: "Designed for the field. Our UI achieves 90%+ adoption through visual workflows and local language support.",
+      desc: "Designed for everyday use with simple workflows and local language support.",
     },
     {
       icon: Wallet,
       title: "Integrated Settlement",
-      desc: "Instant B2B payments reducing trade finance gaps and providing immediate liquidity to rural cooperatives.",
+      desc: "Integrated settlement workflows connecting buyer payments and farmer payouts.",
     },
     {
       icon: Network,
       title: "3PL Synchronization",
-      desc: "Direct API hooks into regional logistics providers to automate fleet dispatch and freight tracking.",
+      desc: "Connected logistics workflows synchronizing dispatch, transport, and delivery updates.",
     },
   ];
 
