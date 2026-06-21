@@ -3,19 +3,31 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api/authApi";
+import { dashboardApi } from "@/lib/api/dashboardApi";
 import { UserInfo } from "@/types/api";
+import { DashboardData } from "@/types/dashboardTypes";
+import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
+import StatCards from "@/components/dashboard/StatCards";
+import SupplySnapshot from "@/components/dashboard/SupplySnapshot";
+import OpenTrades from "@/components/dashboard/OpenTrades";
+import RecentActivity from "@/components/dashboard/RecentActivity";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On mount: ask the backend who we are. If the cookie is missing/expired,
-  // /auth/me returns 401 — bounce to /login.
+  // On load: 1) confirm who we are (real auth), 2) fetch dashboard numbers
+  // (placeholder for now). If the session is gone, /auth/me fails -> go to login.
   useEffect(() => {
     authApi
       .me()
-      .then((info) => setUser(info))
+      .then(async (info) => {
+        setUser(info);
+        const dashboard = await dashboardApi.getDashboard();
+        setData(dashboard);
+      })
       .catch(() => router.replace("/login"))
       .finally(() => setIsLoading(false));
   }, [router]);
@@ -36,35 +48,35 @@ export default function DashboardPage() {
     );
   }
 
-  if (!user) {
-    return null; // we're about to redirect — don't flash anything
+  if (!user || !data) {
+    return null; // about to redirect — don't flash anything
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F4F1] px-4">
-      <header className="max-w-5xl mx-auto flex justify-between items-center py-6">
-        <h1 className="text-2xl font-bold text-[#0E3D2E]">
-          Haarvo<span className="text-[#7FD09A]">.</span>
-        </h1>
-        <button
-          onClick={handleLogout}
-          className="text-sm font-semibold text-[#0E3D2E] underline hover:text-[#0A2E22]"
-        >
-          Sign out
-        </button>
-      </header>
+    <main className="min-h-screen bg-[#F5F4F1]">
+      <DashboardNavbar user={user} onLogout={handleLogout} />
 
-      <div className="max-w-5xl mx-auto mt-16 text-center">
-        <h2 className="text-4xl sm:text-5xl font-bold text-[#0E3D2E]">
-          Welcome to dashboard
-        </h2>
-        <p className="mt-4 text-lg text-gray-700">
-          Hi {user.firstName} {user.lastName} — you&apos;re signed in as{" "}
-          <span className="font-medium">{user.email}</span>.
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <h2 className="text-3xl font-bold text-[#0E3D2E]">Welcome Back</h2>
+        <p className="mt-1 text-gray-600">
+          Overview of your supply, trades, dispatches, and settlements.
         </p>
-        <p className="mt-2 text-sm text-gray-500">
-          (Real dashboard content will be built next.)
-        </p>
+
+        {/* Top stat cards */}
+        <div className="mt-8">
+          <StatCards stats={data.stats} />
+        </div>
+
+        {/* Two-column area: left = supply + trades, right = activity */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <SupplySnapshot rows={data.supply} />
+            <OpenTrades rows={data.trades} />
+          </div>
+          <div>
+            <RecentActivity items={data.activity} />
+          </div>
+        </div>
       </div>
     </main>
   );
