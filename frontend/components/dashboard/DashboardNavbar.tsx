@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Bell, Settings, LogOut, ChevronDown } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { UserInfo } from "@/types/api";
+import Logo from "@/components/ui/Logo";
 
-// The page passes us the logged-in user and the real logout function.
+
 interface DashboardNavbarProps {
   user: UserInfo;
   onLogout: () => void;
@@ -13,24 +15,28 @@ interface DashboardNavbarProps {
 
 export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps) {
   const { showToast } = useToast();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // profile dropdown open/closed
+  const router = useRouter();
+  const pathname = usePathname(); // current URL, e.g. "/member-hub" — used to highlight the active link
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Only "Dashboard" is built. ready:false links just show a toast for now.
+  // Links with a "path" are real pages we can navigate to.
+  // Links with path: null are not built yet -> show a toast.
   const navLinks = [
-    { id: "dashboard",  label: "Dashboard",      ready: true },
-    { id: "member",     label: "Member Hub",     ready: false },
-    { id: "supply",     label: "Supply Hub",     ready: false },
-    { id: "trade",      label: "Trade Hub",      ready: false },
-    { id: "dispatch",   label: "Dispatch Hub",   ready: false },
-    { id: "settlement", label: "Settlement Hub", ready: false },
-    { id: "tracex",     label: "TraceX",         ready: false },
+    { id: "dashboard",  label: "Dashboard",      path: "/dashboard" },
+    { id: "member",     label: "Member Hub",     path: "/member-hub" },
+    { id: "supply",     label: "Supply Hub",     path: null },
+    { id: "trade",      label: "Trade Hub",      path: null },
+    { id: "dispatch",   label: "Dispatch Hub",   path: null },
+    { id: "settlement", label: "Settlement Hub", path: null },
+    { id: "tracex",     label: "TraceX",         path: null },
   ];
 
-  const handleNavClick = (link: { label: string; ready: boolean }) => {
-    if (!link.ready) {
+  const handleNavClick = (link: { label: string; path: string | null }) => {
+    if (link.path) {
+      router.push(link.path); // real page -> go there
+    } else {
       showToast(`${link.label} is coming soon — implementation pending.`);
     }
-    // later, when ready === true, we'll do router.push(...)
   };
 
   const handlePending = (label: string) => {
@@ -39,27 +45,30 @@ export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps
   };
 
   return (
-    <header className="w-full bg-[#0E3D2E] text-white">
+    <header className="w-full bg-[#023530] text-white">
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Left: logo + links */}
         <div className="flex items-center gap-10">
-          <div className="text-2xl font-bold">Haarvo</div>
+          <Logo className="h-8" />
 
           <ul className="hidden md:flex items-center gap-6 text-sm">
-            {navLinks.map((link) => (
-              <li key={link.id}>
-                <button
-                  onClick={() => handleNavClick(link)}
-                  className={`pb-1 border-b-2 transition ${
-                    link.id === "dashboard"
-                      ? "border-[#7FD09A] font-semibold"
-                      : "border-transparent text-white/80 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </button>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = link.path === pathname; // are we on this page right now?
+              return (
+                <li key={link.id}>
+                  <button
+                    onClick={() => handleNavClick(link)}
+                    className={`pb-1 border-b-2 transition ${
+                      isActive
+                        ? "border-[#7FD09A] font-semibold"
+                        : "border-transparent text-white/80 hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -73,13 +82,11 @@ export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps
             <Bell size={20} />
           </button>
 
-          {/* Profile dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsMenuOpen((open) => !open)}
               className="flex items-center gap-2"
             >
-              {/* Avatar = first letter of first name (replace with real photo later) */}
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7FD09A] text-[#0E3D2E] font-semibold">
                 {user.firstName.charAt(0)}
               </span>

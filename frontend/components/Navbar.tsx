@@ -5,6 +5,7 @@ import { useState } from "react";
 // useRouter is Next.js's way to change pages from code.
 // IMPORTANT: in the App Router it comes from "next/navigation" (not "next/router").
 import { useRouter } from "next/navigation";
+import Logo from "@/components/ui/Logo";
 
 // Top navigation bar
 export default function Navbar() {
@@ -36,7 +37,7 @@ export default function Navbar() {
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo on the left */}
-        <div className="text-2xl font-bold text-[#0E3D2E]">Haarvo</div>
+        <Logo variant="dark" className="h-12 scale-400" />
 
         {/* Navigation links in the middle */}
         <ul className="hidden items-center gap-8">

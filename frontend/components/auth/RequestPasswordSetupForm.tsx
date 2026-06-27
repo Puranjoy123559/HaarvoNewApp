@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { authApi } from "@/lib/api/authApi";
+import Logo from "@/components/ui/Logo";
 
 export default function RequestPasswordSetupForm() {
   const [email, setEmail] = useState("");
@@ -37,10 +38,10 @@ export default function RequestPasswordSetupForm() {
 
   return (
     <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <div className="bg-gradient-to-br from-[#0E3D2E] to-[#145239] px-6 py-8 text-center">
-        <h1 className="text-3xl font-bold text-white tracking-tight">
-          Haarvo<span className="text-[#7FD09A]">.</span>
-        </h1>
+      <div className="bg-[#023530] px-6 py-8 text-center">
+        <div className="flex justify-center">
+          <Logo className="h-14" href="/" />
+        </div>
       </div>
 
       <div className="px-6 sm:px-10 py-8">

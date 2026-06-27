@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 
 import {
   RegisterFormData,
@@ -359,12 +360,12 @@ const updateStateField = (newStateId: string) => {
   return (
     <div className="w-full max-w-3xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#0E3D2E] to-[#145239] px-6 sm:px-10 py-6 sm:py-8 text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-          Haarvo<span className="text-[#7FD09A]">.</span>
-        </h1>
+      <div className="bg-[#023530] px-6 sm:px-10 py-6 sm:py-8 text-center">
+        <div className="flex justify-center">
+          <Logo className="h-14" href="/" />
+        </div>
         <p className="text-[#C9E5D2] text-xs sm:text-sm mt-2">
-          Powering traceable agri first-mile trade
+          Enabling trade-ready agricultural supply
         </p>
       </div>
 
