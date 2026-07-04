@@ -78,9 +78,9 @@ export default function MemberHubPage() {
         </div>
 
         {/* Two-pane chat card */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 lg:h-[640px]">
+        <div className="mt-6 flex flex-col lg:flex-row overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 lg:h-[640px]">
           {/* Left: conversation list */}
-          <div className="lg:col-span-1 border-b border-gray-100 lg:border-b-0 lg:border-r h-[420px] lg:h-full">
+          <div className="lg:w-1/3 border-b border-gray-100 lg:border-b-0 lg:border-r h-[420px] lg:h-full">
             <ConversationList
               conversations={data.conversations}
               activeId={data.activeConversationId}
@@ -88,7 +88,7 @@ export default function MemberHubPage() {
           </div>
 
           {/* Right: chat thread */}
-          <div className="lg:col-span-2 h-[560px] lg:h-full">
+          <div className="lg:flex-1 h-[560px] lg:h-full">
             <ChatThread
               conversation={activeConversation}
               messages={data.messages}

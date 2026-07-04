@@ -51,7 +51,7 @@ export default function ChatThread({ conversation, messages, dayLabel }: Props) 
       </div>
 
       {/* Messages (scrolls) */}
-      <div className="flex-1 space-y-4 overflow-y-auto bg-[#FAFAF8] px-5 py-4">
+      <div className="flex-1 min-h-0 space-y-4 overflow-y-auto bg-[#FAFAF8] px-5 py-4">
         {/* Day divider */}
         <div className="flex justify-center">
           <span className="rounded-full bg-gray-200 px-3 py-0.5 text-xs font-medium text-gray-600">

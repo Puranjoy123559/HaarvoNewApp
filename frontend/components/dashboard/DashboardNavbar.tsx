@@ -7,33 +7,47 @@ import { useToast } from "@/components/ui/Toast";
 import { UserInfo } from "@/types/api";
 import Logo from "@/components/ui/Logo";
 
-
 interface DashboardNavbarProps {
   user: UserInfo;
   onLogout: () => void;
 }
 
+// Shape of one nav link (a link may optionally have child links = a dropdown)
+type NavLink = {
+  id: string;
+  label: string;
+  path: string | null; // null = not built yet -> shows a toast
+  children?: { id: string; label: string; path: string | null }[];
+};
+
 export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps) {
   const { showToast } = useToast();
   const router = useRouter();
-  const pathname = usePathname(); // current URL, e.g. "/member-hub" — used to highlight the active link
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);   // profile dropdown
+  const [openMenu, setOpenMenu] = useState<string | null>(null); // which nav dropdown is open
 
-  // Links with a "path" are real pages we can navigate to.
-  // Links with path: null are not built yet -> show a toast.
-  const navLinks = [
-    { id: "dashboard",  label: "Dashboard",      path: "/dashboard" },
-    { id: "member",     label: "Member Hub",     path: "/member-hub" },
-    { id: "supply",     label: "Supply Hub",     path: null },
-    { id: "trade",      label: "Trade Hub",      path: null },
-    { id: "dispatch",   label: "Dispatch Hub",   path: null },
+  const navLinks: NavLink[] = [
+    { id: "dashboard", label: "Dashboard", path: "/dashboard" },
+    {
+      id: "member",
+      label: "Member Hub",
+      path: null,
+      children: [
+        { id: "directory", label: "M - Directory", path: null }, // built later
+        { id: "konnect", label: "M - Konnect", path: "/member-hub" },
+      ],
+    },
+    { id: "supply", label: "Supply Hub", path: null },
+    { id: "trade", label: "Trade Hub", path: null },
+    { id: "dispatch", label: "Dispatch Hub", path: null },
     { id: "settlement", label: "Settlement Hub", path: null },
-    { id: "tracex",     label: "TraceX",         path: null },
+    { id: "tracex", label: "TraceX", path: null },
   ];
 
   const handleNavClick = (link: { label: string; path: string | null }) => {
     if (link.path) {
-      router.push(link.path); // real page -> go there
+      router.push(link.path);
     } else {
       showToast(`${link.label} is coming soon — implementation pending.`);
     }
@@ -49,11 +63,54 @@ export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Left: logo + links */}
         <div className="flex items-center gap-10">
-          <Logo className="h-8" />
+          <Logo className="h-9" />
 
           <ul className="hidden md:flex items-center gap-6 text-sm">
             {navLinks.map((link) => {
-              const isActive = link.path === pathname; // are we on this page right now?
+              // A parent is "active" if we're on one of its child pages
+              const isActive = link.path
+                ? link.path === pathname
+                : (link.children?.some((c) => c.path === pathname) ?? false);
+
+              // --- Links WITH a dropdown (e.g. Member Hub) ---
+              if (link.children) {
+                const isOpen = openMenu === link.id;
+                return (
+                  <li key={link.id} className="relative">
+                    <button
+                      onClick={() => setOpenMenu(isOpen ? null : link.id)}
+                      className={`flex items-center gap-1 pb-1 border-b-2 transition ${
+                        isActive
+                          ? "border-[#7FD09A] font-semibold"
+                          : "border-transparent text-white/80 hover:text-white"
+                      }`}
+                    >
+                      {link.label}
+                      <ChevronDown size={14} />
+                    </button>
+
+                    {isOpen && (
+                      <ul className="absolute left-0 mt-2 w-44 rounded-lg bg-[#023530] py-1 shadow-lg ring-1 ring-white/10">
+                        {link.children.map((child) => (
+                          <li key={child.id}>
+                            <button
+                              onClick={() => {
+                                handleNavClick(child);
+                                setOpenMenu(null);
+                              }}
+                              className="block w-full px-4 py-2 text-left text-white/80 hover:bg-white/10 hover:text-white"
+                            >
+                              {child.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                );
+              }
+
+              // --- Normal links ---
               return (
                 <li key={link.id}>
                   <button
