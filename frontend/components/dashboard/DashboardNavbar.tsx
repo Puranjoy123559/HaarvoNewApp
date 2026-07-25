@@ -34,7 +34,7 @@ export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps
       label: "Member Hub",
       path: null,
       children: [
-        { id: "directory", label: "M - Directory", path: null }, // built later
+        { id: "directory", label: "M - Directory", path: "/member-directory" }, // built later
         { id: "konnect", label: "M - Konnect", path: "/member-hub" },
       ],
     },
