@@ -38,7 +38,7 @@ export default function DashboardNavbar({ user, onLogout }: DashboardNavbarProps
         { id: "konnect", label: "M - Konnect", path: "/member-hub" },
       ],
     },
-    { id: "supply", label: "Supply Hub", path: null },
+    { id: "supply", label: "Supply Hub", path: "/supply-hub" },
     { id: "trade", label: "Trade Hub", path: null },
     { id: "dispatch", label: "Dispatch Hub", path: null },
     { id: "settlement", label: "Settlement Hub", path: null },

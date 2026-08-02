@@ -18,13 +18,14 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto text-center">
         {/* Main headline */}
         <h1 className="text-5xl md:text-6xl font-bold text-[#0E3D2E] leading-tight mb-6">
-          The Traceable Trade Execution Infrastructure for Farmer Collectives.
+          The Digital Platform Built for Farmer Collective Organizations.
         </h1>
 
         {/* Subtitle */}
         <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-10">
-          Synchronizing aggregated supply with institutional demand to 
-          eliminate value leaks and standardize agricultural trade execution.
+          Helping you manage farmers, connect with reliable buyers, sell produce, 
+          discover market prices, streamline trade operations and grow with
+          confidence—all from one platform.
         </p>
 
         {/* Two action buttons */}
